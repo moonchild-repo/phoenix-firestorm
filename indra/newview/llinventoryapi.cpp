@@ -800,7 +800,16 @@ LLSD LLInventoryAPINode::serializeInventoryItem(const LLViewerInventoryItem* ite
     LLSD result;
     if (!item) return result;
 
-    result["uuid"] = item->getUUID().asString();
+    // Use getLinkedUUID() for stable identifier - this points to the original item
+    // even if this is a link in the COF
+    result["uuid"] = item->getLinkedUUID().asString();
+    
+    // Also include the link UUID if this is a link (for reference)
+    if (item->getIsLinkType())
+    {
+        result["link_uuid"] = item->getUUID().asString();
+    }
+    
     result["name"] = item->getName();
     result["type"] = LLAssetType::lookup(item->getType());
     result["asset_type"] = LLAssetType::lookup(item->getActualType());
