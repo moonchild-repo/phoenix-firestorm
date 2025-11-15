@@ -27,6 +27,8 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llappviewer.h"
+#include "llinventoryapi.h"
+#include "lliohttpserver.h"
 
 // Viewer includes
 #include "llversioninfo.h"
@@ -1452,6 +1454,36 @@ bool LLAppViewer::init()
 
     // Create IO Pump to use for HTTP Requests.
     gServicePump = new LLPumpIO(gAPRPoolp);
+
+    // Initialize Inventory API HTTP Server
+    if (gSavedSettings.getBOOL("InventoryAPIEnabled"))
+    {
+        U32 api_port = gSavedSettings.getU32("InventoryAPIPort");
+        std::string api_host = gSavedSettings.getString("InventoryAPIHost");
+        
+        try
+        {
+            // Create HTTP server root node
+            LLHTTPNode& api_root = LLIOHTTPServer::create(gAPRPoolp, *gServicePump, (U16)api_port);
+            
+            // Register API endpoints - use leading slash like in test examples
+            api_root.addNode("/api/inventory", new LLInventoryAPINode);
+            api_root.addNode("/api/avatar", new LLInventoryAPINode);
+            
+            LL_INFOS("InitInfo") << "Inventory API HTTP server started on " << api_host << ":" << api_port << LL_ENDL;
+            LL_INFOS("InitInfo") << "API endpoints registered: /api/inventory and /api/avatar" << LL_ENDL;
+        }
+        catch (const std::exception& e)
+        {
+            LL_WARNS("InitInfo") << "Failed to start Inventory API HTTP server on port " << api_port 
+                                 << ": " << e.what() << LL_ENDL;
+        }
+        catch (...)
+        {
+            LL_WARNS("InitInfo") << "Failed to start Inventory API HTTP server on port " << api_port 
+                                 << ": Unknown exception" << LL_ENDL;
+        }
+    }
 
     // Note: this is where gLocalSpeakerMgr and gActiveSpeakerMgr used to be instantiated.
 

@@ -34,3 +34,67 @@ This section is guided by the [TPV Policy](https://secondlife.com/corporate/thir
 Firestorm code is made available during ongoing development, with the **master** branch representing the current nightly build. Developers and self-compilers are encouraged to work on their own forks and contribute back via pull requests, as detailed in the [contributing guide](CONTRIBUTING.md).
 
 If you intend to use our code for your own viewer beyond personal use, please only use code from official release branches (for example, `Firestorm_7.1.13`), rather than from pre-release/preview or nightly builds.
+
+## Inventory API
+
+This version of Firestorm includes an experimental HTTP API for accessing and managing your local inventory. The API allows external applications to interact with your inventory, outfits, and avatar appearance.
+
+### Features
+
+- **Inventory Management**: List all inventory items, filter by type (clothing, attachments, bodyparts)
+- **Outfit Management**: List outfits, export outfit data, wear/replace outfits
+- **Item Operations**: Wear/remove individual items or multiple items at once
+- **Attachment Management**: List currently attached objects
+- **Outfit Export**: Export complete outfit data including items and attachments for external storage
+
+### Configuration
+
+The API is disabled by default. To enable it, set the following viewer settings:
+
+- `InventoryAPIEnabled` = `true`
+- `InventoryAPIPort` = `8080` (default)
+- `InventoryAPIHost` = `127.0.0.1` (default, localhost only)
+
+### API Documentation
+
+For complete API documentation including all endpoints, request/response formats, and examples, see [API_SPECIFICATION.md](API_SPECIFICATION.md).
+
+### Quick Start
+
+1. Enable the API in viewer settings (see Configuration above)
+2. Start the Firestorm viewer
+3. Wait for inventory to fully load
+4. Access the API at `http://127.0.0.1:8080/api`
+
+**Example:**
+```bash
+# List all outfits
+curl http://127.0.0.1:8080/api/inventory/outfits
+
+# Wear an outfit
+curl -X POST http://127.0.0.1:8080/api/inventory/outfit/wear \
+  -H "Content-Type: application/json" \
+  -d '{"outfit_id":"YOUR_OUTFIT_UUID","append":false}'
+```
+
+### Security Note
+
+⚠️ **Important**: The API currently has no authentication and is intended for local use only. Do not expose the API to external networks without implementing proper authentication.
+
+### Implementation Details
+
+The API is implemented using:
+- `LLIOHTTPServer` for HTTP server functionality
+- `LLHTTPNode` for request routing
+- LLSD (Linden Lab Scripting Data) format for data serialization
+- Standard Firestorm inventory and appearance management systems
+
+**Files Added:**
+- `indra/newview/llinventoryapi.h` - API node header
+- `indra/newview/llinventoryapi.cpp` - API implementation
+- `API_SPECIFICATION.md` - Complete API documentation
+
+**Files Modified:**
+- `indra/newview/llappviewer.cpp` - API server initialization
+- `indra/newview/app_settings/settings.xml` - API configuration settings
+- `indra/newview/CMakeLists.txt` - Build configuration

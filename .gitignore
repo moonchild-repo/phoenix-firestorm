@@ -131,3 +131,91 @@ firestorm.code-workspace
 .github/release.yaml
 
 checks.json
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+*.venv
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Build directories
+build-check/
+build-vc*/
+build-darwin-*/
+build-linux-*/
+# Note: build-variables/ is source code, don't ignore it
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+!CMakeLists.txt
+!*.cmake.in
+.cmake/
+
+# IDE and editor files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.vs/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+logs/
+*.cache
+
+# Compiled binaries (keep source)
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.obj
+*.o
+*.pdb
+
+# Package files
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# Autobuild and build configuration (generated)
+my_autobuild.xml
+autobuild-package.xml

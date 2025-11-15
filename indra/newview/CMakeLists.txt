@@ -496,6 +496,7 @@ set(viewer_SOURCE_FILES
     llinventorygallery.cpp
     llinventorygallerymenu.cpp
     llinventoryicon.cpp
+    llinventoryapi.cpp
     llinventoryitemslist.cpp
     llinventorylistener.cpp
     llinventorylistitem.cpp
