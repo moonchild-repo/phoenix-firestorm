@@ -1,0 +1,78 @@
+name: Build AI Wiki Feature (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feature/ai-wiki"
+      - "feature/ai-wiki-*"
+
+env:
+  AUTOBUILD_VARIABLES_FILE: ${{ github.workspace }}/build-variables/variables
+  AUTOBUILD_VSVER: "170"
+  XZ_DEFAULTS: -T0
+  addrsize: 64
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout viewer source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Checkout build variables
+        uses: actions/checkout@v5
+        with:
+          repository: FirestormViewer/fs-build-variables
+          path: build-variables
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install autobuild and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+        shell: bash
+
+      - name: Verify autobuild
+        run: autobuild --version
+        shell: bash
+
+      - name: Configure
+        run: |
+          autobuild configure -c ReleaseFS -A${{ env.addrsize }} -- \
+            --package \
+            --chan AIWiki \
+            -DLL_TESTS:BOOL=OFF \
+            -DUSE_FMODSTUDIO:BOOL=OFF \
+            -DUSE_KDU:BOOL=OFF
+        shell: bash
+
+      - name: Build
+        run: autobuild build -c ReleaseFS -A${{ env.addrsize }} --no-configure
+        shell: bash
+
+      - name: Extract version
+        id: version
+        run: |
+          if [ -r "indra/newview/VIEWER_VERSION.txt" ]; then
+            echo "version=$(cat indra/newview/VIEWER_VERSION.txt)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=unknown" >> "$GITHUB_OUTPUT"
+          fi
+          echo "build=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v5
+        with:
+          name: firestorm-ai-wiki-windows-${{ steps.version.outputs.version }}.${{ steps.version.outputs.build }}
+          path: |
+            build-vc*/newview/Release/*Setup.exe
+            build-vc*/newview/Release/*.xz
+          retention-days: 14
