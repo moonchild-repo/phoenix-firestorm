@@ -44,17 +44,11 @@ jobs:
         shell: bash
 
       - name: Configure
-        run: |
-          autobuild configure -c ReleaseFS -A${{ env.addrsize }} -- \
-            --package \
-            --chan AIWiki \
-            -DLL_TESTS:BOOL=OFF \
-            -DUSE_FMODSTUDIO:BOOL=OFF \
-            -DUSE_KDU:BOOL=OFF
+        run: autobuild configure -c ReleaseFS_open -A${{ env.addrsize }} -- --package --chan AIWiki
         shell: bash
 
       - name: Build
-        run: autobuild build -c ReleaseFS -A${{ env.addrsize }} --no-configure
+        run: autobuild build -c ReleaseFS_open -A${{ env.addrsize }} --no-configure
         shell: bash
 
       - name: Extract version
