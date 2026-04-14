@@ -40,6 +40,13 @@ jobs:
           python -m pip install -r requirements.txt
         shell: bash
 
+      - name: Remove proprietary packages (not available without rclone)
+        run: |
+          autobuild installables remove fmodstudio      || true
+          autobuild installables remove kdu             || true
+          autobuild installables remove llphysicsextensions_tpv || true
+        shell: bash
+
       - name: Install third-party packages
         run: autobuild install -A64
         shell: bash
