@@ -10,8 +10,9 @@ on:
 env:
   AUTOBUILD_VARIABLES_FILE: ${{ github.workspace }}/build-variables/variables
   AUTOBUILD_VSVER: "170"
+  AUTOBUILD_ADDRSIZE: "64"
+  AUTOBUILD_WIN_CMAKE_GEN: "Visual Studio 17 2022"
   XZ_DEFAULTS: -T0
-  addrsize: 64
 
 jobs:
   build-windows:
@@ -39,16 +40,29 @@ jobs:
           python -m pip install -r requirements.txt
         shell: bash
 
-      - name: Verify autobuild
-        run: autobuild --version
+      - name: Install third-party packages
+        run: autobuild install -A64
         shell: bash
 
       - name: Configure
-        run: autobuild configure -c ReleaseFS_open -A${{ env.addrsize }} -- --package --chan AIWiki
+        run: |
+          mkdir -p build-vc170-64
+          cd build-vc170-64
+          bash ../scripts/configure_firestorm.sh \
+            --config --version \
+            --platform windows \
+            --opensim \
+            --package \
+            --chan AIWiki
         shell: bash
 
       - name: Build
-        run: autobuild build -c ReleaseFS_open -A${{ env.addrsize }} --no-configure
+        run: |
+          cd build-vc170-64
+          bash ../scripts/configure_firestorm.sh \
+            --build --version \
+            --platform windows \
+            --opensim
         shell: bash
 
       - name: Extract version
