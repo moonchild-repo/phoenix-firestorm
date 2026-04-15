@@ -45,7 +45,8 @@ jobs:
           autobuild installables remove fmodstudio      || true
           autobuild installables remove kdu             || true
           autobuild installables remove llphysicsextensions_tpv || true
-          autobuild installables remove havok-source    || true
+          autobuild installables remove havok-source              || true
+          autobuild installables remove llphysicsextensions_source || true
         shell: bash
 
       - name: Install third-party packages
