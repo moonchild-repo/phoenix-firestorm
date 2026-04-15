@@ -47,6 +47,7 @@ jobs:
           autobuild installables remove llphysicsextensions_tpv || true
           autobuild installables remove havok-source              || true
           autobuild installables remove llphysicsextensions_source || true
+          autobuild installables remove discord_sdk               || true
         shell: bash
 
       - name: Install third-party packages
